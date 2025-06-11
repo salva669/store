@@ -80,12 +80,12 @@ WSGI_APPLICATION = 'store.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'store_management_system',
-        'USER': 'store_management_system',
-        'PASSWORD': 'store_management_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'store_management_system',
+       'USER': 'admin_store',
+       'PASSWORD': 'Admin123',
+       'HOST': 'localhost',
+       'PORT': '3306',
     }
 }
 
