@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 from storeapp.models import CustomUser, Staffs, Courses, Subjects, FeedBackStaffs,  LeaveReportStaff
 
 def admin_home(request):
-    student_count=Students.objects.all().count()
     staff_count=Staffs.objects.all().count()
     subject_count=Subjects.objects.all().count()
     course_count=Courses.objects.all().count()
@@ -19,19 +18,19 @@ def admin_home(request):
     student_count_list_in_course=[]
     for course in course_all:
         subjects=Subjects.objects.filter(course_id=course.id).count()
-        students=Students.objects.filter(course_id=course.id).count()
+        
         course_name_list.append(course.course_name)
         subject_count_list.append(subjects)
-        student_count_list_in_course.append(students)
+        
 
     subjects_all=Subjects.objects.all()
     subject_list=[]
     student_count_list_in_subject=[]
     for subject in subjects_all:
         course=Courses.objects.get(id=subject.course_id.id)
-        student_count=Students.objects.filter(course_id=course.id).count()
+        
         subject_list.append(subject.subject_name)
-        student_count_list_in_subject.append(student_count)
+        
 
     staffs=Staffs.objects.all()
     staff_name_list=[]
@@ -40,17 +39,13 @@ def admin_home(request):
         leaves=LeaveReportStaff.objects.filter(staff_id=staff.id,leave_status=1).count()
         staff_name_list.append(staff.admin.username)
 
-    students_all=Students.objects.all()
-    student_name_list=[]
-    for student in students_all:
-        leaves=LeaveReportStudent.objects.filter(student_id=student.id,leave_status=1).count()
-        student_name_list.append(student.admin.username)
+   
 
 
-    return render(request,"hod_template/home_content.html",{"student_count":student_count,"staff_count":staff_count,"subject_count":subject_count,"course_count":course_count,"course_name_list":course_name_list,"subject_count_list":subject_count_list,"student_count_list_in_course":student_count_list_in_course,"student_count_list_in_subject":student_count_list_in_subject,"subject_list":subject_list,"staff_name_list":staff_name_list})
+    return render(request,"boss_template/home_content.html",{"staff_count":staff_count,"subject_count":subject_count,"course_count":course_count,"course_name_list":course_name_list,"subject_count_list":subject_count_list, "subject_list":subject_list,"staff_name_list":staff_name_list})
 
 def add_staff(request):
-    return render(request,"hod_template/add_staff_template.html")
+    return render(request,"boss_template/add_staff_template.html")
 
 def add_staff_save(request):
     if request.method!="POST":
@@ -73,7 +68,7 @@ def add_staff_save(request):
             return HttpResponseRedirect(reverse("add_staff"))
 
 def add_course(request):
-    return render(request,"hod_template/add_course_template.html")
+    return render(request,"boss_template/add_course_template.html")
 
 def add_course_save(request):
     if request.method!="POST":
@@ -92,7 +87,7 @@ def add_course_save(request):
 def add_subject(request):
     courses=Courses.objects.all()
     staffs=CustomUser.objects.filter(user_type=2)
-    return render(request,"hod_template/add_subject_template.html",{"staffs":staffs,"courses":courses})
+    return render(request,"boss_template/add_subject_template.html",{"staffs":staffs,"courses":courses})
 
 def add_subject_save(request):
     if request.method!="POST":
@@ -115,19 +110,19 @@ def add_subject_save(request):
 
 def manage_staff(request):
     staffs=Staffs.objects.all()
-    return render(request,"hod_template/manage_staff_template.html",{"staffs":staffs})
+    return render(request,"boss_template/manage_staff_template.html",{"staffs":staffs})
 
 def manage_course(request):
     courses=Courses.objects.all()
-    return render(request,"hod_template/manage_course_template.html",{"courses":courses})
+    return render(request,"boss_template/manage_course_template.html",{"courses":courses})
 
 def manage_subject(request):
     subjects=Subjects.objects.all()
-    return render(request,"hod_template/manage_subject_template.html",{"subjects":subjects})
+    return render(request,"boss_template/manage_subject_template.html",{"subjects":subjects})
 
 def edit_staff(request,staff_id):
     staff=Staffs.objects.get(admin=staff_id)
-    return render(request,"hod_template/edit_staff_template.html",{"staff":staff,"id":staff_id})
+    return render(request,"boss_template/edit_staff_template.html",{"staff":staff,"id":staff_id})
 
 def edit_staff_save(request):
     if request.method!="POST":
@@ -161,7 +156,7 @@ def edit_subject(request,subject_id):
     subject=Subjects.objects.get(id=subject_id)
     courses=Courses.objects.all()
     staffs=CustomUser.objects.filter(user_type=2)
-    return render(request,"hod_template/edit_subject_template.html",{"subject":subject,"staffs":staffs,"courses":courses,"id":subject_id})
+    return render(request,"boss_template/edit_subject_template.html",{"subject":subject,"staffs":staffs,"courses":courses,"id":subject_id})
 
 def edit_subject_save(request):
     if request.method!="POST":
@@ -189,7 +184,7 @@ def edit_subject_save(request):
 
 def edit_course(request,course_id):
     course=Courses.objects.get(id=course_id)
-    return render(request,"hod_template/edit_course_template.html",{"course":course,"id":course_id})
+    return render(request,"boss_template/edit_course_template.html",{"course":course,"id":course_id})
 
 def edit_course_save(request):
     if request.method!="POST":
@@ -209,7 +204,7 @@ def edit_course_save(request):
 
 def staff_feedback_message(request):
     feedbacks=FeedBackStaffs.objects.all()
-    return render(request,"hod_template/staff_feedback_template.html",{"feedbacks":feedbacks})
+    return render(request,"boss_template/staff_feedback_template.html",{"feedbacks":feedbacks})
 
 @csrf_exempt
 def staff_feedback_message_replied(request):
@@ -226,7 +221,7 @@ def staff_feedback_message_replied(request):
 
 def staff_leave_view(request):
     leaves=LeaveReportStaff.objects.all()
-    return render(request,"hod_template/staff_leave_view.html",{"leaves":leaves})
+    return render(request,"boss_template/staff_leave_view.html",{"leaves":leaves})
 
 def staff_approve_leave(request,leave_id):
     leave=LeaveReportStaff.objects.get(id=leave_id)
@@ -242,7 +237,7 @@ def staff_disapprove_leave(request,leave_id):
 
 def admin_send_notification_staff(request):
     staffs=Staffs.objects.all()
-    return render(request,"hod_template/staff_notification.html",{"staffs":staffs})
+    return render(request,"boss_template/staff_notification.html",{"staffs":staffs})
 
 @csrf_exempt
 def send_staff_notification(request):
@@ -269,7 +264,7 @@ def send_staff_notification(request):
 
 def admin_profile(request):
     user=CustomUser.objects.get(id=request.user.id)
-    return render(request,"hod_template/admin_profile.html",{"user":user})
+    return render(request,"boss_template/admin_profile.html",{"user":user})
 
 def admin_profile_save(request):
     if request.method!="POST":
