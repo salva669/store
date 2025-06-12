@@ -5,21 +5,21 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from storeapp.models import CustomUser, Staffs, Courses, Subjects, FeedBackStaffs,  LeaveReportStaff
+from storeapp.models import CustomUser, Staffs, Stocks, Subjects, FeedBackStaffs,  LeaveReportStaff
 
 def admin_home(request):
     staff_count=Staffs.objects.all().count()
     subject_count=Subjects.objects.all().count()
-    course_count=Courses.objects.all().count()
+    stock_count=Stocks.objects.all().count()
 
-    course_all=Courses.objects.all()
-    course_name_list=[]
+    stock_all=Stocks.objects.all()
+    stock_name_list=[]
     subject_count_list=[]
-    student_count_list_in_course=[]
-    for course in course_all:
-        subjects=Subjects.objects.filter(course_id=course.id).count()
+    student_count_list_in_stock=[]
+    for stock in stock_all:
+        subjects=Subjects.objects.filter(stock_id=stock.id).count()
         
-        course_name_list.append(course.course_name)
+        stock_name_list.append(stock.stock_name)
         subject_count_list.append(subjects)
         
 
@@ -27,7 +27,7 @@ def admin_home(request):
     subject_list=[]
     student_count_list_in_subject=[]
     for subject in subjects_all:
-        course=Courses.objects.get(id=subject.course_id.id)
+        stock=Stocks.objects.get(id=subject.stock_id.id)
         
         subject_list.append(subject.subject_name)
         
@@ -42,7 +42,7 @@ def admin_home(request):
    
 
 
-    return render(request,"boss_template/home_content.html",{"staff_count":staff_count,"subject_count":subject_count,"course_count":course_count,"course_name_list":course_name_list,"subject_count_list":subject_count_list, "subject_list":subject_list,"staff_name_list":staff_name_list})
+    return render(request,"boss_template/home_content.html",{"staff_count":staff_count,"subject_count":subject_count,"stock_count":stock_count,"stock_name_list":stock_name_list,"subject_count_list":subject_count_list, "subject_list":subject_list,"staff_name_list":staff_name_list})
 
 def add_staff(request):
     return render(request,"boss_template/add_staff_template.html")
@@ -67,40 +67,40 @@ def add_staff_save(request):
             messages.error(request,"Failed to Add Staff")
             return HttpResponseRedirect(reverse("add_staff"))
 
-def add_course(request):
-    return render(request,"boss_template/add_course_template.html")
+def add_stock(request):
+    return render(request,"boss_template/add_stock_template.html")
 
-def add_course_save(request):
+def add_stock_save(request):
     if request.method!="POST":
         return HttpResponse("Method Not Allowed")
     else:
-        course=request.POST.get("course")
+        stock=request.POST.get("stock")
         try:
-            course_model=Courses(course_name=course)
-            course_model.save()
-            messages.success(request,"Successfully Added Course")
-            return HttpResponseRedirect(reverse("add_course"))
+            stock_model=Stocks(stock_name=stock)
+            stock_model.save()
+            messages.success(request,"Successfully Added Stock")
+            return HttpResponseRedirect(reverse("add_stock"))
         except:
-            messages.error(request,"Failed To Add Course")
-            return HttpResponseRedirect(reverse("add_course"))
+            messages.error(request,"Failed To Add Stock")
+            return HttpResponseRedirect(reverse("add_stock"))
 
 def add_subject(request):
-    courses=Courses.objects.all()
+    stocks=Stocks.objects.all()
     staffs=CustomUser.objects.filter(user_type=2)
-    return render(request,"boss_template/add_subject_template.html",{"staffs":staffs,"courses":courses})
+    return render(request,"boss_template/add_subject_template.html",{"staffs":staffs,"stocks":stocks})
 
 def add_subject_save(request):
     if request.method!="POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
         subject_name=request.POST.get("subject_name")
-        course_id=request.POST.get("course")
-        course=Courses.objects.get(id=course_id)
+        stock_id=request.POST.get("stock")
+        stock=Stocks.objects.get(id=stock_id)
         staff_id=request.POST.get("staff")
         staff=CustomUser.objects.get(id=staff_id)
 
         try:
-            subject=Subjects(subject_name=subject_name,course_id=course,staff_id=staff)
+            subject=Subjects(subject_name=subject_name,stock_id=stock,staff_id=staff)
             subject.save()
             messages.success(request,"Successfully Added Subject")
             return HttpResponseRedirect(reverse("add_subject"))
@@ -112,9 +112,9 @@ def manage_staff(request):
     staffs=Staffs.objects.all()
     return render(request,"boss_template/manage_staff_template.html",{"staffs":staffs})
 
-def manage_course(request):
-    courses=Courses.objects.all()
-    return render(request,"boss_template/manage_course_template.html",{"courses":courses})
+def manage_stock(request):
+    stocks=Stocks.objects.all()
+    return render(request,"boss_template/manage_stock_template.html",{"stocks":stocks})
 
 def manage_subject(request):
     subjects=Subjects.objects.all()
@@ -154,9 +154,9 @@ def edit_staff_save(request):
 
 def edit_subject(request,subject_id):
     subject=Subjects.objects.get(id=subject_id)
-    courses=Courses.objects.all()
+    stocks=Stocks.objects.all()
     staffs=CustomUser.objects.filter(user_type=2)
-    return render(request,"boss_template/edit_subject_template.html",{"subject":subject,"staffs":staffs,"courses":courses,"id":subject_id})
+    return render(request,"boss_template/edit_subject_template.html",{"subject":subject,"staffs":staffs,"stocks":stocks,"id":subject_id})
 
 def edit_subject_save(request):
     if request.method!="POST":
@@ -165,14 +165,14 @@ def edit_subject_save(request):
         subject_id=request.POST.get("subject_id")
         subject_name=request.POST.get("subject_name")
         staff_id=request.POST.get("staff")
-        course_id=request.POST.get("course")
+        stock_id=request.POST.get("stock")
         try:
             subject=Subjects.objects.get(id=subject_id)
             subject.subject_name=subject_name
             staff=CustomUser.objects.get(id=staff_id)
             subject.staff_id=staff
-            course=Courses.objects.get(id=course_id)
-            subject.course_id=course
+            stock=Stocks.objects.get(id=stock_id)
+            subject.stock_id=stock
             subject.save()
 
             messages.success(request,"Successfully Edited Subject")
@@ -182,25 +182,25 @@ def edit_subject_save(request):
             return HttpResponseRedirect(reverse("edit_subject",kwargs={"subject_id":subject_id}))
 
 
-def edit_course(request,course_id):
-    course=Courses.objects.get(id=course_id)
-    return render(request,"boss_template/edit_course_template.html",{"course":course,"id":course_id})
+def edit_stock(request,stock_id):
+    stock=Stocks.objects.get(id=stock_id)
+    return render(request,"boss_template/edit_stock_template.html",{"stock":stock,"id":stock_id})
 
-def edit_course_save(request):
+def edit_stock_save(request):
     if request.method!="POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
     else:
-        course_id=request.POST.get("course_id")
-        course_name=request.POST.get("course")
+        stock_id=request.POST.get("stock_id")
+        stock_name=request.POST.get("stock")
         try:
-            course=Courses.objects.get(id=course_id)
-            course.course_name=course_name
-            course.save()
-            messages.success(request,"Successfully Edited Course")
-            return HttpResponseRedirect(reverse("edit_course",kwargs={"course_id":course_id}))
+            stock=Stocks.objects.get(id=stock_id)
+            stock.stock_name=stock_name
+            stock.save()
+            messages.success(request,"Successfully Edited Stock")
+            return HttpResponseRedirect(reverse("edit_stock",kwargs={"stock_id":stock_id}))
         except:
-            messages.error(request,"Failed to Edit Course")
-            return HttpResponseRedirect(reverse("edit_course",kwargs={"course_id":course_id}))
+            messages.error(request,"Failed to Edit Stock")
+            return HttpResponseRedirect(reverse("edit_stock",kwargs={"stock_id":stock_id}))
 
 def staff_feedback_message(request):
     feedbacks=FeedBackStaffs.objects.all()

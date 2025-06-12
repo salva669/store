@@ -8,21 +8,21 @@ from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from storeapp.models import Subjects, LeaveReportStaff, Staffs, FeedBackStaffs, CustomUser, Courses, NotificationStaffs
+from storeapp.models import Subjects, LeaveReportStaff, Staffs, FeedBackStaffs, CustomUser, Stocks, NotificationStaffs
 
 def staff_home(request):
     #For Fetch All Student Under Staff
     subjects=Subjects.objects.filter(staff_id=request.user.id)
-    course_id_list=[]
+    stock_id_list=[]
     for subject in subjects:
-        course=Courses.objects.get(id=subject.course_id.id)
-        course_id_list.append(course.id)
+        stock=Stocks.objects.get(id=subject.stock_id.id)
+        stock_id_list.append(stock.id)
 
-    final_course=[]
-    #removing Duplicate Course ID
-    for course_id in course_id_list:
-        if course_id not in final_course:
-            final_course.append(course_id)
+    final_stock=[]
+    #removing Duplicate Stock ID
+    for stock_id in stock_id_list:
+        if stock_id not in final_stock:
+            final_stock.append(stock_id)
 
     #Fetch All Approve Leave
     staff=Staffs.objects.get(admin=request.user.id)
